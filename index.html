@@ -1,61 +1,146 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="dark scroll-smooth">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>md/ — lector de markdown</title>
-<meta name="description" content="Sube un archivo .md y léelo con foco, como notas bajo una lámpara.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<meta name="description" content="Soltá un archivo .md y leelo con calma. Lector local, sin subidas.">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/geist-sans@5.1.0/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/geist-mono@5.1.0/index.css">
+<style type="text/tailwindcss">
+@theme {
+  --font-sans: "Geist Sans", "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --color-brand: #e9480d;
+  --color-brand-strong: #c73d0b;
+}
+</style>
 <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="bg-black text-neutral-100 font-sans antialiased">
 
 <div class="progress" id="progress"></div>
 
-<div class="shell">
-
-  <aside class="rail">
-    <div class="mark">md<span>/</span></div>
-
-    <div class="card" id="dropzone">
-      <p class="card-title">suelta un .md</p>
-      <p class="card-sub">o hacé click para elegir un archivo</p>
-      <input type="file" id="fileInput" accept=".md,.markdown,text/markdown,text/plain" hidden>
+<nav class="fixed top-0 left-0 right-0 z-50 px-6 py-4 bg-black/70 backdrop-blur-md">
+  <div class="max-w-7xl mx-auto flex justify-between items-center">
+    <div class="flex items-center gap-2.5">
+      <span class="font-serif text-white text-xl tracking-tight">md<em class="text-brand not-italic">/</em></span>
     </div>
+    <div class="flex items-center gap-3">
+      <span class="hidden sm:inline-flex items-center px-3 py-1.5 border border-white/10 rounded-md text-neutral-400 text-xs font-light uppercase tracking-wide">100% local · sin subidas</span>
+    </div>
+  </div>
+</nav>
 
-    <button class="link-btn" id="pasteToggle" type="button">pegar texto en vez de subir</button>
+<main class="min-h-screen bg-black relative" id="main">
+  <div class="bg-grid-fade absolute inset-x-0 top-0 h-[480px] pointer-events-none" aria-hidden="true"></div>
+
+  <div class="relative container mx-auto px-4 sm:px-6 py-12 sm:py-16 max-w-4xl pt-28">
+
     <div class="paste-box" id="pasteBox" hidden>
       <textarea id="pasteArea" placeholder="pegá tu markdown acá..." spellcheck="false"></textarea>
-      <button class="btn" id="pasteRender" type="button">renderizar</button>
+      <button class="btn-brand" id="pasteRender" type="button">renderizar</button>
     </div>
 
-    <div class="meta" id="meta" hidden>
-      <p class="meta-name" id="metaName"></p>
-      <p class="meta-stats" id="metaStats"></p>
-      <button class="link-btn" id="clearBtn" type="button">quitar documento</button>
-    </div>
+    <section id="emptyState">
+      <p class="anim-rise text-xs font-light uppercase tracking-widest text-neutral-500 mb-4">md/ lector local</p>
+      <h1 class="anim-rise font-serif text-white text-4xl sm:text-5xl md:text-6xl font-normal tracking-tight mb-6 sm:mb-8 leading-tight">
+        Soltá un markdown <em class="text-brand">y leelo sin ruido.</em>
+      </h1>
+      <p class="anim-rise anim-delay-100 font-sans text-neutral-400 text-lg font-light leading-relaxed mb-10 sm:mb-12 max-w-xl">
+        Pensado para repasar apuntes propios antes de una exposición o un examen. Nada se sube: el archivo queda en tu navegador.
+      </p>
 
-    <nav class="toc" id="toc" hidden>
-      <p class="toc-title">en esta página</p>
-      <ol id="tocList"></ol>
-    </nav>
-  </aside>
+      <div class="anim-rise anim-delay-200 card p-6 sm:p-8 text-center cursor-pointer" id="dropzone" role="button" tabindex="0" aria-label="Elegir archivo markdown">
+        <svg class="w-6 h-6 mx-auto mb-3 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+        </svg>
+        <p class="text-white font-normal mb-1">soltá un .md acá</p>
+        <p class="text-neutral-500 text-sm font-light">o hacé click para elegir un archivo</p>
+      </div>
 
-  <main class="reading">
-    <div class="lamp" aria-hidden="true"></div>
-
-    <section class="empty" id="emptyState">
-      <p class="empty-eyebrow">md/ lector</p>
-      <h1>Nada que leer todavía</h1>
-      <p class="empty-body">Pensado para repasar apuntes propios antes de una exposición o un examen: cargá un .md y quedan la letra, la lámpara y vos.</p>
+      <div class="anim-rise anim-delay-300 mt-6">
+        <button class="link-quiet" id="pasteToggle" type="button">pegar texto en vez de subir</button>
+      </div>
     </section>
 
-    <article class="content" id="content" hidden></article>
-  </main>
+    <div id="docWrap" hidden>
+      <header class="mb-12 sm:mb-16 border-b border-white/10 pb-8 sm:pb-10">
+        <p class="text-xs font-light uppercase tracking-widest text-neutral-500 mb-4">documento local</p>
+        <h1 class="font-serif text-white text-3xl sm:text-4xl md:text-5xl font-normal tracking-tight mb-6 sm:mb-8 leading-tight break-words" id="docTitle"></h1>
 
-</div>
+        <div class="flex flex-wrap items-center gap-4 text-neutral-500 text-sm sm:text-base mb-6 font-light" id="meta">
+          <span class="flex items-center gap-2">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span class="font-mono text-sm text-neutral-300 break-all" id="metaName"></span>
+          </span>
+          <span class="flex items-center gap-2">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span id="metaStats"></span>
+          </span>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mb-0 text-sm font-light">
+          <button class="link-quiet" id="changeBtn" type="button">cambiar archivo</button>
+          <button class="link-quiet" id="pasteToggleDoc" type="button">pegar texto</button>
+          <button class="link-quiet link-danger" id="clearBtn" type="button">quitar documento</button>
+        </div>
+
+        <nav class="toc mt-6" id="toc" hidden aria-label="Tabla de contenidos">
+          <button id="tocToggle" type="button" aria-expanded="false" class="w-full flex items-center justify-between p-4 bg-black border border-white/10 rounded-xl text-white hover:bg-white/[0.02] hover:border-white/20 transition-all duration-300 group">
+            <span class="flex items-center gap-2.5 font-light text-sm">
+              <svg class="w-4 h-4 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+              </svg>
+              Tabla de contenidos
+              <span class="text-xs text-neutral-500" id="tocCount"></span>
+            </span>
+            <svg id="tocChevron" class="w-5 h-5 transition-transform duration-300 text-neutral-500 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div class="mt-2 p-4 bg-black border border-white/10 rounded-xl" id="tocPanel" hidden>
+            <ol class="space-y-1 text-sm max-h-96 overflow-y-auto" id="tocList"></ol>
+          </div>
+        </nav>
+      </header>
+
+      <article class="mb-16 sm:mb-20">
+        <div class="md-content" id="content"></div>
+      </article>
+
+      <footer class="border-t border-white/10 pt-8 sm:pt-10">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
+          <button id="clearBtnGhost" type="button" class="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 bg-black border border-white/10 rounded-full text-white hover:bg-white/5 hover:border-white/20 transition-all duration-300 font-light text-sm">
+            quitar documento
+          </button>
+          <button id="toTopBtn" type="button" class="group inline-flex items-center justify-center gap-3 w-full sm:w-auto bg-brand hover:bg-brand-strong text-white font-sans font-light text-sm px-6 py-3 rounded-full transition-all duration-300 hover:shadow-[0_0_40px_-8px_rgba(233,72,13,0.7)]">
+            volver arriba
+            <svg class="w-4 h-4 group-hover:-translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+            </svg>
+          </button>
+        </div>
+      </footer>
+    </div>
+
+  </div>
+
+  <button id="scrollTopBtn" type="button" aria-label="Volver arriba" class="scrolltop">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+    </svg>
+  </button>
+</main>
+
+<input type="file" id="fileInput" accept=".md,.markdown,text/markdown,text/plain" hidden>
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
