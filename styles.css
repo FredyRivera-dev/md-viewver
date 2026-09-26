@@ -35,16 +35,6 @@ body{background:#000;}
 ::-webkit-scrollbar-thumb:hover{background:var(--brand-strong);}
 *{scrollbar-width:thin;scrollbar-color:var(--brand) #000;}
 
-/* hero grid */
-.bg-grid-fade{
-  background-image:
-    linear-gradient(to right, rgba(255,255,255,.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255,255,255,.04) 1px, transparent 1px);
-  background-size:64px 64px;
-  -webkit-mask-image:linear-gradient(to bottom, black 45%, transparent 98%);
-  mask-image:linear-gradient(to bottom, black 45%, transparent 98%);
-}
-
 /* entrance */
 @keyframes rise{
   from{opacity:0;transform:translateY(14px);}

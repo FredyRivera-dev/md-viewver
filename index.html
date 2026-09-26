@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>md/ — lector de markdown</title>
-<meta name="description" content="Soltá un archivo .md y leelo con calma. Lector local, sin subidas.">
+<meta name="description" content="Soltá un archivo .md y leelo con calma.">
 <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/geist-sans@5.1.0/index.css">
@@ -29,15 +29,10 @@
     <div class="flex items-center gap-2.5">
       <span class="font-serif text-white text-xl tracking-tight">md<em class="text-brand not-italic">/</em></span>
     </div>
-    <div class="flex items-center gap-3">
-      <span class="hidden sm:inline-flex items-center px-3 py-1.5 border border-white/10 rounded-md text-neutral-400 text-xs font-light uppercase tracking-wide">100% local · sin subidas</span>
-    </div>
   </div>
 </nav>
 
 <main class="min-h-screen bg-black relative" id="main">
-  <div class="bg-grid-fade absolute inset-x-0 top-0 h-[480px] pointer-events-none" aria-hidden="true"></div>
-
   <div class="relative container mx-auto px-4 sm:px-6 py-12 sm:py-16 max-w-4xl pt-28">
 
     <div class="paste-box" id="pasteBox" hidden>
